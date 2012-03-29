@@ -1,6 +1,12 @@
 #include "bimagemanager.h"
-#include "QDir"
-#include <vector>
+
+BImageManager::BImageManager(const FileFactory & fileFactory) {
+     this->fileFactory = fileFactory;
+}
+
+void BImageManager::SetDirectory(const std::wstring & dirName) {
+    directory.SetPath(dirName);
+}
 
 /*
 BImageManager::BImageManager()
