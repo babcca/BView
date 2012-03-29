@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     bdirectory.cpp \
     BViewQtOpenGl_gtest.cpp \
     bmpfileloader.cpp \
-    DataAllocator.cpp
+    DataAllocator.cpp \
+    bimage.cpp
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     bcache.h \
     icacheitem.h \
     bmpfileloader.h \
-    DataAllocator.h
+    DataAllocator.h \
+    bimage.h
 
 FORMS    += mainwindow.ui
 
