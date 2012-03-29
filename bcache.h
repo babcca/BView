@@ -1,5 +1,10 @@
 #ifndef BCACHE_H
 #define BCACHE_H
+
+class cache_traits {
+};
+
+
 template<typename ItemType, typename CacheTraits>
 class BCache {
 public:
@@ -9,11 +14,7 @@ public:
 
     BCache() : id(0) {}
     ~BCache() {
-        CACHE_STORAGE::iterator i = cacheItems.begin();
-        while (i != cacheItems.end()) {
-            delete (*i);
-            ++i;
-        }
+
     }
 
     ID InsertIntoCache(ItemType item) {
@@ -28,6 +29,15 @@ public:
             cacheItem->LoadIntoCache();
         }
         return cacheItem;
+    }
+
+    void FreeCache() {
+        CACHE_STORAGE::iterator i = cacheItems.begin();
+        while (i != cacheItems.end()) {
+            delete (*i);
+            (*i) = 0;
+            ++i;
+        }
     }
 
 private:
