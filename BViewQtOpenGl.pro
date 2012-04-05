@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     BViewQtOpenGl_gtest.cpp \
     bmpfileloader.cpp \
     DataAllocator.cpp \
-    bimage.cpp
+    bimage.cpp \
+    brender.cpp
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -31,10 +32,13 @@ HEADERS  += mainwindow.h \
     icacheitem.h \
     bmpfileloader.h \
     DataAllocator.h \
-    bimage.h
+    bimage.h \
+    bimagefileloader.h \
+    globalstruct.h \
+    brender.h
 
 FORMS    += mainwindow.ui
 
 INCLUDEPATH += "gtest/include"
-LIBS += -Llibs -lgtestd
+LIBS += -Llibs -lgtestd -lbmplib
 CONFIG += console

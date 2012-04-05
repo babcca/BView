@@ -2,6 +2,7 @@
 #define BSINGLETONCACHE_H
 #include "bdirectory.h"
 #include <vector>
+#include <assert.h>
 
 template<typename CacheType>
 class BSingletonCache

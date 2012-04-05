@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QKeyEvent"
+#include "QFileDialog"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    ui->OGLCanvas->SetDebugger(ui->DebugConsole);
-    QObject::connect(this, SIGNAL(LeftKey()), ui->OGLCanvas, SLOT(LeftKey()));
+    this->connect(this, SIGNAL(LeftKey()), ui->OGLCanvas, SLOT(LeftKey()));
+    this->connect(this, SIGNAL(SetDirectory(QString)), ui->OGLCanvas, SLOT(SetDirectory(QString)));
 }
 
 MainWindow::~MainWindow()
@@ -17,6 +18,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::OpenFileExplorer() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::Directory);
+    if(dialog.exec()) {
+        auto selected = dialog.selectedFiles();
+        QString dirPath = selected[0];
+        emit SetDirectory(dirPath);
+    }
+}
 
 void MainWindow::keyPressEvent(QKeyEvent *keyEvent) {
     switch (keyEvent->key()) {

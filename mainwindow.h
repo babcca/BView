@@ -17,6 +17,10 @@ public:
 
 signals:
     void LeftKey();
+    void SetDirectory(const QString & dirPath);
+
+private slots:
+    void OpenFileExplorer();
 
 protected:
     void keyPressEvent(QKeyEvent * keyEvent);

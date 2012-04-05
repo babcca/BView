@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 
+
 class FileLoader : public ICacheItem {
 public:
     FileLoader() {

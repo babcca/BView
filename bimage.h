@@ -1,38 +1,31 @@
 #ifndef BIMAGE_H
 #define BIMAGE_H
 #include "icacheitem.h"
-#include "fileloader.h"
+#include "bimagefileloader.h"
+#include "globalstruct.h"
 
 class Image : public ICacheItem {
 public:
-    Image(FileLoader * file_cache_id_) : file_cache(file_cache_id_) {
-        IsCached(false);
-    }
-    ~Image() {
-        delete file_cache;
-    }
+    Image(ImageFileLoader * file_cache_id_);
+    ~Image();
+    virtual void LoadIntoCache();
+    virtual void DeleteFromCache();
+    virtual void UnloadFromCache();
 
-    virtual void LoadIntoCache() {
-        std::cout << "ImageLoadIntoCache" << std::endl;
-        //typedef BSingletonCache<BCache<FileLoader *, cache_traits> > fileCache;
-        //auto instance = fileCache::Instance();
-        //FileLoader * file = instance->GetRecord(file_cace_id);
-        file_cache->LoadIntoCache();
+    void SetImageInfo(const ImageInfo & imageInfo) ;
+    void AllocateMemmory();
 
-    }
+    const int GetWidth() const;
+    const int GetHeight() const;
+    const int GetBitCount() const;
+    const int GetPixelSize() const;
+    const int GetPixelFormat() const;
 
-    virtual void DeleteFromCache() {
-        std::cout << "ImageDelete" << std::endl;
-        file_cache->DeleteFromCache();
+    DataAllocator ImageData;
+    ImageInfo imageInfo;
+private:
+    ImageFileLoader * fileLoader;
 
-    }
-
-    virtual void UnloadFromCache() {
-        std::cout << "ImageUnload" << std::endl;
-        file_cache->UnloadFromCache();
-    }
-
-    FileLoader * file_cache;
 };
 
 

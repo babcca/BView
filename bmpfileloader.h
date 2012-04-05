@@ -1,14 +1,15 @@
 #ifndef BMPFILELOADER_H
 #define BMPFILELOADER_H
-#include "fileloader.h"
-#include "DataAllocator.h"
+#include "bimagefileloader.h"
+#include "bmplib/bmplib.h"
 
-class BMPFileLoader : FileLoader {
+class BMPFileLoader : public ImageFileLoader {
 public:
     BMPFileLoader();
     virtual ~BMPFileLoader() {}
-    static FileLoader * CreateInstance();
-    DataAllocator fileData;
+    static ImageFileLoader * CreateInstance();
+    virtual void Decode(Image *destImage);
+
 };
 
 #endif // BMPFILELOADER_H
