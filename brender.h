@@ -2,7 +2,7 @@
 #define BRENDER_H
 
 #include "bimage.h"
-
+#include <vector>
 class BRender
 {
 public:
@@ -21,16 +21,12 @@ private:
     int height;
 };
 
-struct BGR {
-    char g;
-    char b;
-    char r;
-};
+
 
 struct Scale {
     void ScaleRect(Image * input, Image * output, float ratio);
 private:
-    void ScaleLine(BGR * src, BGR * dest, int srcWidth, int destWidth);
+    void ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth);
 
 };
 
@@ -41,47 +37,57 @@ struct Matrix {
         : width(width_), height(height_) {
         matrix = new Type[width*height];
         std::memcpy(matrix, values, width*height*sizeof(Type));
-        /*
-        for (int i = 0; i < width*height; ++i) {
-            matrix[i] = values[i];
-        }
-        */
-
     }
 
-    ~Matrix() {
-        if (matrix != 0) {
-            delete matrix;
-            matrix = 0;
-        }
+    ~Matrix() {   
+        delete matrix;
+        matrix = 0;
     }
-    /*
-    {
-        if (*this != matrix) {
-            if (this->matrix != 0) {
-                delete this->matrix;
-                this->matrix = 0;
-            }
-            width = matrix.width;
-            height = matrix.height;
-            std::memcpy(this->matrix, matrix, width*height);
-        }
-        return *this;
+    Matrix(const Matrix<Type> & matrix) {
+        width = matrix.width;
+        height = matrix.height;
+        this->matrix = new Type[width*height];
+        std::memcpy(this->matrix, matrix.matrix, width*height*sizeof(Type));
     }
-    */
-    const Type Get(int row, int col) const {
-        int index = (row * width) + col;
-        Type v = matrix[index];
-        return v;
+    Type Get(int row, int col) const {
+        return matrix[row*width + col];
     }
 
     int width;
     int height;
 
 private:
-    Matrix (const Matrix &);
     Matrix & operator= (const Matrix & matrix);
     Type * matrix;
+};
+
+#include "bimageprocess.h"
+struct GrayScale {
+    void Average(Image * src, Image * dest) {
+        BImageProcess procesor;
+        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
+            char gray = (rgba.r + rgba.g + rgba.b) / 3;
+            return RGBA(gray, gray, gray);
+        });
+    }
+
+    void Luminosity(Image * src, Image * dest) {
+        BImageProcess procesor;
+        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
+            char gray = (0.21 * rgba.r + 0.71 * rgba.g + 0.07 * rgba.b);
+            return RGBA(gray, gray, gray);
+        });
+    }
+    void Lightness(Image * src, Image * dest) {
+        BImageProcess procesor;
+        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
+            unsigned char max = std::max<unsigned char>(std::max<unsigned char>(rgba.r, rgba.g), rgba.b);
+            unsigned char min = std::min<unsigned char>(std::min<unsigned  char>(rgba.r, rgba.g), rgba.b);
+            unsigned char gray = (max + min) /2;
+            return RGBA(gray, gray, gray);
+        });
+    }
+
 };
 
 struct EdgeDetection {
@@ -89,35 +95,47 @@ struct EdgeDetection {
 };
 
 struct Convolution {
-    void Convolute(Image * source, const Matrix<int> & kernel, Image * output) {
+    RGBA KernelsConvolute(Image * source, int row, int col, const std::vector<Matrix<int> >& kernels) {
+        std::shared_ptr<char> sourceData = source->ImageData.GetAllocatedMemory();
+        RGBA * src = reinterpret_cast<RGBA *>(sourceData.get());
 
+        RGBA value(0,0,0);
 
-        std::shared_ptr<char> destData = output->ImageData.GetAllocatedMemory();
-        char * dest = destData.get();
-
-        for (int row = 0; row < source->GetHeight() * 3 - kernel.height; ++row) {
-            for (int col = 0; col < source->GetWidth() * 3 - kernel.width; ++col) {
-                int value = KernelConvolute(source, row, col, kernel);
-                qDebug("a %d = %d", col,  source->GetWidth());
-                if (col == source->GetWidth()) {
-                    int b = 12*221;
-
+            for (int i = 0; i < kernels[0].height; ++i) {
+                for (int j = 0; j < kernels[0].width; ++j) {
+                    for (int k = 0; k < kernels.size(); ++k) {
+                        int srcRow = (row + i) * (source->GetWidth());
+                        int kernelValue = kernels[k].Get(i,j);
+                        value = value + (src[srcRow + col + j] * kernelValue);
+                    }
                 }
-                dest[(row + 1) * (source->GetWidth() * 3) + col + 1] = (unsigned char) abs(value);
+            }
 
+        return value;
+    }
+
+    void Convolute(Image * source, const std::vector<Matrix<int>  >& kernels, Image * output) {
+        std::shared_ptr<char> destData = output->ImageData.GetAllocatedMemory();
+        RGBA * dest = reinterpret_cast<RGBA *>(destData.get());
+
+        for (int row = 0; row < source->GetHeight() - kernels[0].height; ++row) {
+            for (int col = 0; col < source->GetWidth() - kernels[0].width; ++col) {
+                RGBA value = KernelsConvolute(source, row, col, kernels);
+                dest[(row + 1) * (source->GetWidth()) + col + 1] = value;
             }
         }
     }
 
-    int KernelConvolute(Image * source, int row, int col, const Matrix<int> & kernel) {
+    RGBA KernelConvolute(Image * source, int row, int col, const Matrix<int> & kernel) {
         std::shared_ptr<char> sourceData = source->ImageData.GetAllocatedMemory();
-        char * src = sourceData.get();
-        int value = 0;
+        RGBA * src = reinterpret_cast<RGBA *>(sourceData.get());
+
+        RGBA value(0,0,0);
         for (int i = 0; i < kernel.height; ++i) {
             for (int j = 0; j < kernel.width; ++j) {
-                int srcRow = (row + i) * (source->GetWidth() * 3);
+                int srcRow = (row + i) * (source->GetWidth());
                 int kernelValue = kernel.Get(i,j);
-                value += src[srcRow + col + j] * kernelValue;
+                value = value + (src[srcRow + col + j] * kernelValue);
             }
         }
         return value;

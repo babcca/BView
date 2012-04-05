@@ -23,7 +23,30 @@ void BRender::Render(Image *image) {
         RenderImage(renderImage);
         delete renderImage;
     } else {
-        RenderImage(image);
+        Image * edge = new Image(0);
+        edge->SetImageInfo(image->imageInfo);
+        edge->AllocateMemmory();
+        int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
+        int b[] = { 1,2,1, 0,0,0, -1,-2,-1};
+        int c[] = { -2,-1,0, -1, 0, 1, 0,1,2 };
+        int d[] = { 0,1,2,-1,0,1,-2,-1,0};
+        std::vector<Matrix<int> > kernels;
+        Matrix<int> m(3,3,a);
+        Matrix<int> n(3,3,b);
+        Matrix<int> o(3,3,c);
+        Matrix<int> p(3,3,d);
+        kernels.push_back(m);
+        kernels.push_back(n);
+        kernels.push_back(o);
+        kernels.push_back(p);
+
+        GrayScale g;
+        g.Luminosity(image, image);
+        Convolution convolution;
+        convolution.Convolute(image, kernels, edge);
+
+        RenderImage(edge);
+        delete edge;
     }
 }
 
@@ -63,9 +86,9 @@ Image * BRender::AllocateRenderBuffer(Image * image, float ratio) {
 ImageInfo BRender::GetNewImageInfo(Image *image, float ratio) {
     ImageInfo imageInfo = image->imageInfo;
     // Bitmapa ma zarovnani radky na nasobky 4 (do 32 bit intu)
-    imageInfo.width = ((int) floor(imageInfo.width * ratio) / 4) * 4;
+    imageInfo.width = floor(imageInfo.width * ratio);
     imageInfo.height = floor(imageInfo.height * ratio);
-    imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * 3;
+    imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * 4;
     return imageInfo;
 }
 
@@ -75,7 +98,7 @@ int round(float num) {
     return (int) floor(num + 0.5);
 }
 // pAda, nekde spatne pocitam
-void Scale::ScaleLine(BGR *src, BGR *dest, int srcWidth, int destWidth) {
+void Scale::ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth) {
    float ratio = srcWidth / (float) destWidth;
    for (int i = 0; i < destWidth; ++i) {
        int colIndex = round(i * ratio);
@@ -86,10 +109,10 @@ void Scale::ScaleLine(BGR *src, BGR *dest, int srcWidth, int destWidth) {
 
 void Scale::ScaleRect(Image *input, Image *output, float ratio2) {
     std::shared_ptr<char> srcMemory = input->ImageData.GetAllocatedMemory();
-    BGR * src = reinterpret_cast<BGR *>(srcMemory.get());
+    RGBA * src = reinterpret_cast<RGBA *>(srcMemory.get());
 
     std::shared_ptr<char> destMemory = output->ImageData.GetAllocatedMemory();
-    BGR * dest = reinterpret_cast<BGR *>(destMemory.get());
+    RGBA * dest = reinterpret_cast<RGBA *>(destMemory.get());
 
     int srcWidth = input->GetWidth();
     int srcHeight = input->GetHeight();

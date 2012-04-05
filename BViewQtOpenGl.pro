@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     bmpfileloader.cpp \
     DataAllocator.cpp \
     bimage.cpp \
-    brender.cpp
+    brender.cpp \
+    bimageprocess.cpp
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     bimage.h \
     bimagefileloader.h \
     globalstruct.h \
-    brender.h
+    brender.h \
+    bimageprocess.h
 
 FORMS    += mainwindow.ui
 

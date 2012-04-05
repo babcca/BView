@@ -1,5 +1,5 @@
 #include "bmplib.h"
-
+#include <iostream>
 /// <summary>
 /// Dokumentace datovych struktur
 ///		http://msdn.microsoft.com/en-us/library/dd183376
@@ -18,8 +18,13 @@ ImageInfo BmpLib::InitializeFileHeader(DataAllocator & file_buffer) {
             data_offset =  bmpFileHeader->bfOffBits;
             // After file header is info header
             BMPInfoHeader * bmpInfoHeader = (BMPInfoHeader *) (memory.get()+sizeof(BITMAPFILEHEADER));
-            ImageInfo imageInfo(bmpInfoHeader);
-            return imageInfo;
+            if (bmpInfoHeader->biBitCount == 24) {
+                ImageInfo imageInfo(bmpInfoHeader);
+                imageInfo.imageSize = imageInfo.width * imageInfo.height * sizeof(RGBA);
+                return imageInfo;
+            } else {
+                throw new std::exception();
+            }
 		} else {
 			throw new std::exception();
 		}
@@ -32,9 +37,29 @@ void BmpLib::Decode(DataAllocator & input_data_buffer, DataAllocator & output_da
 	if (output_data_buffer.IsMemoryAllocated()) {
 		// Uncompress commepresed data start
         std::shared_ptr<char> buffer = input_data_buffer.GetAllocatedMemory();
-        char * compressedDataStart = buffer.get() + data_offset;
+        char * sourceData = buffer.get() + data_offset;
+
         std::shared_ptr<char> decompressedDataStart = output_data_buffer.GetAllocatedMemory();
-        std::memcpy(decompressedDataStart.get(), compressedDataStart, output_data_buffer.GetAllocatedDataSize());
+        char * destDataStart = decompressedDataStart.get();
+        RGBA * destData = reinterpret_cast<RGBA *>(destDataStart);
+
+        BMPInfoHeader * bmpInfoHeader = reinterpret_cast<BMPInfoHeader *>(buffer.get()+sizeof(BITMAPFILEHEADER));
+        int width = bmpInfoHeader->biWidth;
+        int height = bmpInfoHeader->biHeight;
+
+        unsigned int lineLength = static_cast<unsigned int>((ceil((width * 3)/4.0))*4);
+        unsigned int offset = lineLength - 3*width;
+
+        for (int row = 0; row < height; ++row) {
+            for (int col = 0; col < width; ++col) {
+                char b = (*sourceData++);
+                char g = (*sourceData++);
+                char r = (*sourceData++);
+                *destData++ = RGBA(r,g,b);
+            }
+            sourceData += offset;
+        }
+
 	} else {
 		throw new std::exception();
 	}

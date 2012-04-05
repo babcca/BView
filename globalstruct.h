@@ -16,6 +16,9 @@ struct BMPInfoHeader {
 };
 
 struct ImageInfo {
+    static const unsigned int RGBA = 0x1908;
+    static const short BYTE_SIZE = 8;
+
     ImageInfo() :  width(0), height(0), bitCount(0), pixelSize(0), pixelFormat(-1), imageSize(0) {}
     ImageInfo(const BMPInfoHeader * header) {
         width = header->biWidth;
@@ -23,7 +26,7 @@ struct ImageInfo {
         bitCount = header->biBitCount;
         pixelSize = bitCount / BYTE_SIZE;
         imageSize = header->biSizeImage;
-        pixelFormat =  0x80E0; // GL_BGR
+        pixelFormat =  RGBA; // GL_BGR
     }
     int width;
     int height;
@@ -31,6 +34,42 @@ struct ImageInfo {
     int pixelSize;
     int imageSize;
     unsigned int pixelFormat; // GLenum
-    static const short BYTE_SIZE = 8;
+
 };
+
+struct BGR {
+    char g;
+    char b;
+    char r;
+};
+
+struct RGBA {
+    RGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) {
+        this->r = r;
+        this->g = g;
+        this->b = b;
+        this->a = a;
+    }
+
+    RGBA(const BGR & bgr) {
+        this->r = bgr.r;
+        this->g = bgr.g;
+        this->b = bgr.b;
+        this->a = 150;
+    }
+
+    RGBA operator*(const int value) {
+        return RGBA((char) r*value, (char) g*value, (char) b*value);
+    }
+
+    RGBA operator+(const RGBA & rgba) {
+        return RGBA(r+rgba.r,g+rgba.g,b+rgba.b);
+    }
+
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;
+};
+
 #endif // GLOBALSTRUCT_H

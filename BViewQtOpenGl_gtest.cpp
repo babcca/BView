@@ -22,7 +22,7 @@ ImageInfo GetNewImageInfo(Image *image, float ratio) {
     ImageInfo imageInfo = image->imageInfo;
     imageInfo.width = imageInfo.width * ratio;
     imageInfo.height = imageInfo.height * ratio;
-    imageInfo.imageSize = imageInfo.width * imageInfo.height * 3;
+    imageInfo.imageSize = imageInfo.width * imageInfo.height * 4;
     return imageInfo;
 }
 
@@ -34,6 +34,15 @@ TEST(Matrix, Matrix) {
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             EXPECT_EQ(a[i*3 + j], m.Get(i,j));
+        }
+    }
+
+    int b[] = { 1,2,3,4,5,6,7,8,9};
+    Matrix<int> n(3,3,b);
+    Matrix<int> o(n);
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_EQ(n.Get(i,j), o.Get(i,j));
         }
     }
 }
@@ -55,8 +64,10 @@ TEST(Convolution, Convolute) {
     Convolution con;
     int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
     Matrix<int> m(3,3,a);
-    con.Convolute(&imageManager.ActualImage, m, renderImage);
-
+    std::vector<Matrix<int> > kernels;
+    kernels.push_back(m);
+    con.Convolute(&imageManager.ActualImage, kernels, renderImage);
+    delete renderImage;
 }
 
 TEST(Render, Scale) {
