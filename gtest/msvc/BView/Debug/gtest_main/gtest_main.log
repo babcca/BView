@@ -1,0 +1,22 @@
+﻿Build started 6.3.2012 21:42:49.
+     1>Project "C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\gtest_main.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "BView/Debug\gtest_main\gtest_main.lastbuildstate".
+       InitializeBuildStatus:
+         Touching "BView/Debug\gtest_main\gtest_main.unsuccessfulbuild".
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.. /I..\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _LIB /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"BView/Debug\gtest_main\\" /Fd"BView/Debug\gtest_main\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ..\src\gtest_main.cc
+         gtest_main.cc
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(1151,5): warning MSB8012: TargetPath(C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\BView/Debug\gtest_main.lib) does not match the Library's OutputFile property value (C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\BView\Debug\gtest_maind.lib). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(1153,5): warning MSB8012: TargetName(gtest_main) does not match the Library's OutputFile property value (gtest_maind). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Lib.OutputFile).
+       Lib:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\Lib.exe /OUT:"BView/Debug\gtest_maind.lib" /NOLOGO BView/Debug\gtest_main\gtest_main.obj
+         gtest_main.vcxproj -> C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\BView/Debug\gtest_main.lib
+     1>Project "C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\gtest_main.vcxproj" (1) is building "C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\gtest_main.vcxproj" (1:5) on node 2 (GetCopyToOutputDirectoryItems target(s)).
+     1>C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets(3051,5): error MSB4006: There is a circular dependency in the target dependency graph involving target "GetCopyToOutputDirectoryItems".
+     1>Done Building Project "C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\gtest_main.vcxproj" (GetCopyToOutputDirectoryItems target(s)) -- FAILED.
+     1>Done Building Project "C:\Users\Petr Babicka\Documents\Projects\CPP\BView\gtest-1.6.0\msvc\gtest_main.vcxproj" (rebuild target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.24
