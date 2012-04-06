@@ -20,6 +20,7 @@ public:
     const int GetBitCount() const;
     const int GetPixelSize() const;
     const int GetPixelFormat() const;
+    const RGBA GetPixel(int row, int col);
 
     DataAllocator ImageData;
     ImageInfo imageInfo;

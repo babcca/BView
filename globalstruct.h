@@ -17,16 +17,16 @@ struct BMPInfoHeader {
 
 struct ImageInfo {
     static const unsigned int RGBA = 0x1908;
-    static const short BYTE_SIZE = 8;
+    static const short PIXEL_SIZE = 4;
 
     ImageInfo() :  width(0), height(0), bitCount(0), pixelSize(0), pixelFormat(-1), imageSize(0) {}
     ImageInfo(const BMPInfoHeader * header) {
         width = header->biWidth;
         height = header->biHeight;
         bitCount = header->biBitCount;
-        pixelSize = bitCount / BYTE_SIZE;
         imageSize = header->biSizeImage;
-        pixelFormat =  RGBA; // GL_BGR
+        pixelFormat =  this->RGBA; // GL_BGR
+        pixelSize = PIXEL_SIZE;
     }
     int width;
     int height;

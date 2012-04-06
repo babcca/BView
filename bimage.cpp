@@ -7,10 +7,17 @@ Image::Image(ImageFileLoader * file_cache_id_)
 }
 
 Image::~Image() {
-//    DeleteFromCache();
-//    delete fileLoader;
+    DeleteFromCache();
+    if (fileLoader != 0) {
+        delete fileLoader;
+        fileLoader = 0;
+    }
 }
 
+const RGBA Image::GetPixel(int row, int col) {
+    int dataIndex = row * GetWidth()*sizeof(RGBA) + col * sizeof(RGBA);
+    return *(reinterpret_cast<RGBA *>(((ImageData.GetAllocatedMemory()).get()) + dataIndex));
+}
 void Image::LoadIntoCache() {
     if (!IsCached()) {
         std::cout << "ImageLoadIntoCache" << std::endl;
@@ -22,7 +29,8 @@ void Image::LoadIntoCache() {
 
 void Image::DeleteFromCache() {
     std::cout << "ImageDelete" << std::endl;
-    fileLoader->DeleteFromCache();
+    ImageData.FreeAllocatedMemory();
+    //fileLoader->DeleteFromCache();
 
 }
 

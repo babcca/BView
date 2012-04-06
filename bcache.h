@@ -18,7 +18,6 @@ public:
     }
 
     ID InsertIntoCache(ItemType item) {
-
         cacheItems.push_back(item);
         return cacheItems.size() - 1;
     }

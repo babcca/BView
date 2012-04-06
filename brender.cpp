@@ -2,7 +2,7 @@
 #include <QGLWidget>
 #include <math.h>
 #include <assert.h>
-
+#include "bconvolution.h"
 BRender::BRender()
 {
 }
@@ -17,11 +17,11 @@ void BRender::Render(Image *image) {
     ratio = floor(ratio*100)/100;
     qDebug("%f", ratio);
     if (ratio < 1.0) {
-        Image * renderImage = AllocateRenderBuffer(image, ratio);
-        Scale scaler;
-        scaler.ScaleRect(image, renderImage, ratio);
-        RenderImage(renderImage);
-        delete renderImage;
+        //Image * renderImage = AllocateRenderBuffer(image, ratio);
+        Scaler scaler;
+        std::shared_ptr<Image> renderImage = scaler.Scale(image, ratio);
+        RenderImage(renderImage.get());
+        //delete renderImage;
     } else {
         Image * edge = new Image(0);
         edge->SetImageInfo(image->imageInfo);
@@ -30,21 +30,23 @@ void BRender::Render(Image *image) {
         int b[] = { 1,2,1, 0,0,0, -1,-2,-1};
         int c[] = { -2,-1,0, -1, 0, 1, 0,1,2 };
         int d[] = { 0,1,2,-1,0,1,-2,-1,0};
+        int e[] = {1,1,1,1,-8,1,1,1,1};
+        int f[] = {0,1,0,1,-4,1,0,1,0};
         std::vector<Matrix<int> > kernels;
         Matrix<int> m(3,3,a);
         Matrix<int> n(3,3,b);
         Matrix<int> o(3,3,c);
         Matrix<int> p(3,3,d);
-        kernels.push_back(m);
-        kernels.push_back(n);
-        kernels.push_back(o);
-        kernels.push_back(p);
-
+        Matrix<int> q(3,3,f);
+        //kernels.push_back(m);
+        //kernels.push_back(n);
+        //kernels.push_back(o);
+        //kernels.push_back(p);
+        kernels.push_back(q);
         GrayScale g;
         g.Luminosity(image, image);
         Convolution convolution;
         convolution.Convolute(image, kernels, edge);
-
         RenderImage(edge);
         delete edge;
     }
@@ -75,6 +77,8 @@ float BRender::GetRatio(Image *image) {
     return ratio;
 }
 
+
+/** @deprecated */
 Image * BRender::AllocateRenderBuffer(Image * image, float ratio) {
     ImageInfo imageInfo = GetNewImageInfo(image, ratio);
     Image * renderImage = new Image(0);
@@ -83,6 +87,8 @@ Image * BRender::AllocateRenderBuffer(Image * image, float ratio) {
     return renderImage;
 }
 
+
+/** @deprecated */
 ImageInfo BRender::GetNewImageInfo(Image *image, float ratio) {
     ImageInfo imageInfo = image->imageInfo;
     // Bitmapa ma zarovnani radky na nasobky 4 (do 32 bit intu)
@@ -94,9 +100,7 @@ ImageInfo BRender::GetNewImageInfo(Image *image, float ratio) {
 
 
 
-int round(float num) {
-    return (int) floor(num + 0.5);
-}
+/*
 // pAda, nekde spatne pocitam
 void Scale::ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth) {
    float ratio = srcWidth / (float) destWidth;
@@ -107,6 +111,7 @@ void Scale::ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth) {
 }
 
 
+/** @deprecated /
 void Scale::ScaleRect(Image *input, Image *output, float ratio2) {
     std::shared_ptr<char> srcMemory = input->ImageData.GetAllocatedMemory();
     RGBA * src = reinterpret_cast<RGBA *>(srcMemory.get());
@@ -126,4 +131,4 @@ void Scale::ScaleRect(Image *input, Image *output, float ratio2) {
         ScaleLine(&src[srcRowIndex], &dest[i*destWidth], srcWidth, destWidth);
     }
 }
-
+*/

@@ -9,6 +9,7 @@
 #include "bimage.h"
 #include "bimagemanager.h"
 #include "brender.h"
+#include "bconvolution.h"
 class JPGFile : ImageFileLoader {
 public:
     static ImageFileLoader * CreateInstance() {
@@ -79,14 +80,9 @@ TEST(Render, Scale) {
     imageManager.LoadDirectory(L".");
 
     for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
-        ImageInfo imageInfo = GetNewImageInfo(&imageManager.ActualImage, ratio);
-        Image * renderImage = new Image(0);
-        renderImage->SetImageInfo(imageInfo);
-        renderImage->AllocateMemmory();
+        Scaler scaler;
+        std::shared_ptr<Image> renderImage = scaler.Scale(&imageManager.ActualImage, ratio);
 
-        Scale scaler;
-        scaler.ScaleRect(&imageManager.ActualImage, renderImage, ratio);
-        delete renderImage;
     }
 
 }

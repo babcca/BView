@@ -21,9 +21,6 @@ struct DataAllocator {
 	virtual ~DataAllocator();
 	/** Copy constructor */
 	void operator=(DataAllocator & data);
-    //void operator=(Memory & data);
-    ///** Return part of allocated data */
-    //std::shared_ptr<char *> GetAllocatedMemory(int offset, int size);
 	/** Return writeable pointer to allocated data */
     std::shared_ptr<char> GetAllocatedMemory() { return allocated_data; }
 	/** Return size of allocated memory */

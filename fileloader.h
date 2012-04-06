@@ -39,6 +39,7 @@ public:
 
     virtual void DeleteFromCache() {
         std::cout << "FileDelete" << std::endl;
+        FileData.FreeAllocatedMemory();
     }
 
 
