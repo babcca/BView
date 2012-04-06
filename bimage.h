@@ -10,7 +10,6 @@ public:
     ~Image();
     virtual void LoadIntoCache();
     virtual void DeleteFromCache();
-    virtual void UnloadFromCache();
 
     void SetImageInfo(const ImageInfo & imageInfo) ;
     void AllocateMemmory();

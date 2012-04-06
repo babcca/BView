@@ -4,11 +4,12 @@ DataAllocator::~DataAllocator() {
     //FreeAllocatedMemory();
 }
 
+/*
 void DataAllocator::operator=(DataAllocator & data) {
     AllocateDataMemory(data.GetAllocatedDataSize());
     std::memcpy(allocated_data.get(), data.GetAllocatedMemory().get(), GetAllocatedDataSize());
 }
-
+*/
 //void DataAllocator::operator=(Memory & data) {
     //FreeAllocatedMemory();
 //	AllocateDataMemory(data.GetAllocatedDataSize());

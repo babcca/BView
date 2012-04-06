@@ -66,7 +66,7 @@ void OpenGlCanvas::RedrawCanvas() {
     if (imageManager.ActualImage.initialized) {
         qDebug("Redraw");
         render.Render(&imageManager.ActualImage);
-        imageManager.ActualImage->DeleteFromCache();
+        //imageManager.ActualImage->DeleteFromCache();
     }
     count++;
 }

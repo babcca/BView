@@ -6,10 +6,10 @@
 class BMPFileLoader : public ImageFileLoader {
 public:
     BMPFileLoader();
-    virtual ~BMPFileLoader() {}
-    static ImageFileLoader * CreateInstance();
+    virtual ~BMPFileLoader();
     virtual void Decode(Image *destImage);
 
+    static ImageFileLoader * CreateInstance();
 };
 
 #endif // BMPFILELOADER_H

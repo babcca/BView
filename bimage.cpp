@@ -21,22 +21,14 @@ const RGBA Image::GetPixel(int row, int col) {
 void Image::LoadIntoCache() {
     if (!IsCached()) {
         std::cout << "ImageLoadIntoCache" << std::endl;
-        fileLoader->LoadIntoCache();
         fileLoader->Decode(this);
         IsCached(true);
     }
 }
 
 void Image::DeleteFromCache() {
-    std::cout << "ImageDelete" << std::endl;
     ImageData.FreeAllocatedMemory();
-    //fileLoader->DeleteFromCache();
-
-}
-
-void Image::UnloadFromCache() {
-    std::cout << "ImageUnload" << std::endl;
-    fileLoader->UnloadFromCache();
+    IsCached(false);
 }
 
 void Image::SetImageInfo(const ImageInfo &imageInfo) {

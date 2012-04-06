@@ -14,6 +14,7 @@ public:
     typedef std::vector<IMAGE_ID> imagesStorage;
 
     BImageManager();
+    ~BImageManager();
     void SetFileFactory(FileFactory<ImageFileLoader *> fileFactory);
     void LoadDirectory(const std::wstring & dirName);
     IMAGE_ID LoadImage(QFileInfo & fileInfo);

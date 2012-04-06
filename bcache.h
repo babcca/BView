@@ -1,6 +1,6 @@
 #ifndef BCACHE_H
 #define BCACHE_H
-
+#include <map>
 class cache_traits {
 };
 
@@ -9,17 +9,14 @@ template<typename ItemType, typename CacheTraits>
 class BCache {
 public:
     typedef unsigned int ID;
-    typedef std::vector<ItemType> CACHE_STORAGE;
+    typedef std::map<ID, ItemType> CACHE_STORAGE;
     CACHE_STORAGE cacheItems;
 
     BCache() : id(0) {}
-    ~BCache() {
-
-    }
 
     ID InsertIntoCache(ItemType item) {
-        cacheItems.push_back(item);
-        return cacheItems.size() - 1;
+        cacheItems[id] = item;
+        return id++;
     }
 
     ItemType GetRecord(ID id) {
@@ -30,12 +27,25 @@ public:
         return cacheItem;
     }
 
-    void FreeCache() {
+    void ClearCache() {
         CACHE_STORAGE::iterator i = cacheItems.begin();
         while (i != cacheItems.end()) {
-            delete (*i);
-            (*i) = 0;
-            ++i;
+            if ((*i)->IsCached()) {
+                (*i)->DeleteFromCache();
+            }
+            delete *i;
+        }
+    }
+
+    void DestroyRecord(ID id) {
+        auto toDelete = cacheItems.find(id);
+        if (toDelete != cacheItems.end()) {
+            if (toDelete->second->IsCached()) {
+                toDelete->second->DeleteFromCache();
+            }
+            cacheItems.erase(toDelete);
+        } else {
+            std::cerr << "ID: " << id << " missed" << std::endl;
         }
     }
 

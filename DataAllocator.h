@@ -20,7 +20,7 @@ struct DataAllocator {
 	DataAllocator() : allocated_data(0), allocated_data_size(0) {} 
 	virtual ~DataAllocator();
 	/** Copy constructor */
-	void operator=(DataAllocator & data);
+    //void operator=(DataAllocator & data);
 	/** Return writeable pointer to allocated data */
     std::shared_ptr<char> GetAllocatedMemory() { return allocated_data; }
 	/** Return size of allocated memory */
@@ -33,6 +33,8 @@ struct DataAllocator {
 	void FreeAllocatedMemory();
 
 private:
+    DataAllocator & operator= (const DataAllocator &);
+    DataAllocator(const DataAllocator &);
     std::shared_ptr<char> allocated_data; /**< Pointer to allocated memory */
 	int allocated_data_size; /**< Size of allocated memory */
 };

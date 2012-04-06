@@ -4,7 +4,6 @@
 class ICacheItem {
 public:
     virtual void LoadIntoCache() = 0;
-    virtual void UnloadFromCache() = 0;
     virtual void DeleteFromCache() = 0;
     const bool IsCached() const { return isCached; }
 protected:

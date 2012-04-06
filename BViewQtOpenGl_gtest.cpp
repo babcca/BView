@@ -19,13 +19,6 @@ public:
     }
 };
 
-ImageInfo GetNewImageInfo(Image *image, float ratio) {
-    ImageInfo imageInfo = image->imageInfo;
-    imageInfo.width = imageInfo.width * ratio;
-    imageInfo.height = imageInfo.height * ratio;
-    imageInfo.imageSize = imageInfo.width * imageInfo.height * 4;
-    return imageInfo;
-}
 
 TEST(Matrix, Matrix) {
     int a[] = { -1,0,1, -2, 0, 2, -1,0,1};

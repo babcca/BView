@@ -7,6 +7,12 @@ BImageManager::BImageManager(std::shared_ptr<FileFactory<ImageFileLoader *> > fi
 BImageManager::BImageManager() : revision(0), ActualImage(*this) {
 }
 
+BImageManager::~BImageManager() {
+    std::for_each(imagesId.begin(), imagesId.end(), [this](IMAGE_ID id) {
+        BImageManager::imageCache::Instance()->DestroyRecord(id);
+    });
+}
+
 void BImageManager::SetFileFactory(FileFactory<ImageFileLoader *> fileFactory) {
     this->fileFactory = fileFactory;
 }
