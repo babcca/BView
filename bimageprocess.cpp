@@ -19,13 +19,13 @@ void BImageProcess::ForEach(Image *source, Image * destiny, Procesor procesor) {
     }
 }
 
-void BImageProcess::ForEach(ImageRow & imageRow, ColProcesor colProcesor) {
+void BImageProcess::ForEachInRow(ImageRow & imageRow, ColProcesor colProcesor) {
     for (int col = 0; col < imageRow.width; ++col) {
         colProcesor(col, imageRow.rowData[col]);
     }
 }
 
-void BImageProcess::ForEachRow(Image *destiny, RowProcesor rowProcesor) {
+void BImageProcess::ForEachRowSerial(Image *destiny, RowProcesor rowProcesor) {
     std::shared_ptr<char> destinyMemory = destiny->ImageData.GetAllocatedMemory();
     RGBA * destinyData = reinterpret_cast<RGBA *>(destinyMemory.get());
 
@@ -34,4 +34,17 @@ void BImageProcess::ForEachRow(Image *destiny, RowProcesor rowProcesor) {
         ImageRow rowData(rowDataPointer, destiny->GetWidth());
         rowProcesor(row, rowData);
     }
+}
+
+void BImageProcess::ForEachRowParallel(Image *destiny, RowProcesor rowProcesor) {
+    std::shared_ptr<char> destinyMemory = destiny->ImageData.GetAllocatedMemory();
+    RGBA * destinyData = reinterpret_cast<RGBA *>(destinyMemory.get());
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, destiny->GetHeight()), [=](tbb::blocked_range<size_t> & range) {
+        for (size_t row = range.begin(); row != range.end(); ++row) {
+            RGBA * rowDataPointer = destinyData + row*(destiny->GetWidth());
+            ImageRow rowData(rowDataPointer, destiny->GetWidth());
+            rowProcesor(row, rowData);
+        }
+    });
 }

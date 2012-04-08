@@ -72,13 +72,25 @@ TEST(Render, Scale) {
     imageManager.SetFileFactory(fileFactory);
     imageManager.LoadDirectory(L".");
 
+    tbb::tick_count start_serial = tbb::tick_count::now();
     for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
         Scaler scaler;
-        std::shared_ptr<Image> renderImage = scaler.Scale(&imageManager.ActualImage, ratio);
+        std::shared_ptr<Image> renderImage = scaler.ScaleSerial(&imageManager.ActualImage, ratio);
 
     }
+    tbb::tick_count stop_serial = tbb::tick_count::now();
+    std::cout << "Seril done, parallel start" << std::endl;
+    tbb::tick_count start_parallel = tbb::tick_count::now();
+    for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
+        Scaler scaler;
+        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(&imageManager.ActualImage, ratio);
 
+    }
+    tbb::tick_count stop_parallel = tbb::tick_count::now();
+    std::cout << "Serial: " << (stop_serial - start_serial).seconds() << std::endl;
+    std::cout << "parallel: " << (stop_parallel - start_parallel).seconds() << std::endl;
 }
+
     TEST(Directory, Listing) {
         BDirectory directory;        
         EXPECT_FALSE(directory.file_begin() == directory.file_end());

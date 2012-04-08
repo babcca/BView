@@ -2,6 +2,10 @@
 #define BIMAGEPROCESS_H
 #include "bimage.h"
 #include <functional>
+#include "tbb/parallel_for.h"
+#include "tbb/parallel_reduce.h"
+#include "tbb/blocked_range.h"
+#include "tbb/tick_count.h"
 
 struct ImageRow {
     ImageRow(RGBA * rowData_, int width_) : rowData(rowData_), width(width_) { }
@@ -18,10 +22,12 @@ public:
     typedef std::function<void (int, RGBA &)> ColProcesor;
     BImageProcess();
     void ForEach(Image *source, Image * destiny, Procesor procesor);
+
     static void ForEach(Image * source, EachProcesor eachProcesor);
 
-    static void ForEach(ImageRow & imageRow, ColProcesor colProcesor);
-    static void ForEachRow(Image * destiny, RowProcesor rowProcesor);
+    static void ForEachInRow(ImageRow & imageRow, ColProcesor colProcesor);
+    static void ForEachRowSerial(Image * destiny, RowProcesor rowProcesor);
+    static void ForEachRowParallel(Image * destiny, RowProcesor rowProcesor);
 
 
 };

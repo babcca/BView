@@ -23,15 +23,6 @@ private:
 };
 
 
-
-struct Scale {
-    void ScaleRect(Image * input, Image * output, float ratio);
-private:
-    void ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth);
-
-};
-
-
 #include "bimageprocess.h"
 struct GrayScale {
     void Average(Image * src, Image * dest) {

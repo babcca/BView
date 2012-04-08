@@ -19,10 +19,12 @@ void BRender::Render(Image *image) {
     if (ratio < 1.0) {
         //Image * renderImage = AllocateRenderBuffer(image, ratio);
         Scaler scaler;
-        std::shared_ptr<Image> renderImage = scaler.Scale(image, ratio);
+        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(image, ratio);
         RenderImage(renderImage.get());
         //delete renderImage;
     } else {
+        RenderImage(image);
+        return;
         Image * edge = new Image(0);
         edge->SetImageInfo(image->imageInfo);
         edge->AllocateMemmory();
@@ -61,6 +63,8 @@ std::pair<float, float> BRender::GetCenterPosition(Image * image) {
 }
 
 void BRender::RenderImage(Image *image) {
+    GrayScale g;
+    g.Luminosity(image, image);
     int height = image->GetHeight();
     int width = image->GetWidth();
     int format = image->GetPixelFormat();
@@ -97,38 +101,3 @@ ImageInfo BRender::GetNewImageInfo(Image *image, float ratio) {
     imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * 4;
     return imageInfo;
 }
-
-
-
-/*
-// pAda, nekde spatne pocitam
-void Scale::ScaleLine(RGBA *src, RGBA *dest, int srcWidth, int destWidth) {
-   float ratio = srcWidth / (float) destWidth;
-   for (int i = 0; i < destWidth; ++i) {
-       int colIndex = round(i * ratio);
-       dest[i] = src[colIndex];
-   }
-}
-
-
-/** @deprecated /
-void Scale::ScaleRect(Image *input, Image *output, float ratio2) {
-    std::shared_ptr<char> srcMemory = input->ImageData.GetAllocatedMemory();
-    RGBA * src = reinterpret_cast<RGBA *>(srcMemory.get());
-
-    std::shared_ptr<char> destMemory = output->ImageData.GetAllocatedMemory();
-    RGBA * dest = reinterpret_cast<RGBA *>(destMemory.get());
-
-    int srcWidth = input->GetWidth();
-    int srcHeight = input->GetHeight();
-    int destWidth = output->GetWidth();
-    int destHeight = output->GetHeight();
-
-    float ratio = srcHeight / (float) destHeight;
-
-    for (int i = 0; i < destHeight; ++i) {
-        int srcRowIndex = round(i*ratio)*srcWidth;
-        ScaleLine(&src[srcRowIndex], &dest[i*destWidth], srcWidth, destWidth);
-    }
-}
-*/

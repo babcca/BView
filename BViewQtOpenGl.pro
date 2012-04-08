@@ -44,6 +44,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += "gtest/include"
+INCLUDEPATH += "gtest/include" "tbb/include"
 LIBS += -Llibs -lgtestd -lbmplib
 CONFIG += console
