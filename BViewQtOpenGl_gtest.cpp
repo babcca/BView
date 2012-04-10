@@ -57,12 +57,12 @@ TEST(Convolution, Convolute) {
     ImageInfo imageInfo = imageManager.ActualImage->imageInfo;
     renderImage->SetImageInfo(imageInfo);
     renderImage->AllocateMemmory();
-    Convolution<int> con;
-    int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
-    Matrix<int> m(3,3,a);
-    std::vector<Matrix<int> > kernels;
-    kernels.push_back(m);
-    con.Convolute(&imageManager.ActualImage, kernels, renderImage);
+    //Convolution<int> con;
+    //int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
+    //Matrix<int> m(3,3,a);
+    //std::vector<Matrix<int> > kernels;
+    //kernels.push_back(m);
+    //con.Convolute(&imageManager.ActualImage, kernels, renderImage);
     delete renderImage;
 }
 

@@ -20,6 +20,17 @@ struct Matrix {
         std::memcpy(this->matrix, matrix.matrix, width*height*sizeof(Type));
     }
 
+    Matrix & operator= (const Matrix & matrix) {
+        if (this != &matrix) {
+            delete this->matrix;
+            width = matrix.width;
+            height = matrix.height;
+            this->matrix = new Type[width*height];
+            std::memcpy(this->matrix, matrix.matrix, width*height*sizeof(Type));
+        }
+        return *this;
+    }
+
     Type Get(int row, int col) const {
         return matrix[row*width + col];
     }
@@ -34,7 +45,7 @@ struct Matrix {
     int height;
 
 private:
-    Matrix & operator= (const Matrix & matrix);
+
     Type * matrix;
 };
 #endif // BMATRIX_H

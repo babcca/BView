@@ -18,7 +18,6 @@ OpenGlCanvas::~OpenGlCanvas() {
 }
 
 void OpenGlCanvas::InitializeMenu(QMenuBar *menuBar) {
-    //connect(menuBar, SIGNAL(triggered(QAction*)), this, SLOT(RedrawCanvas()));
     render.InitializeMenu(menuBar);
 }
 

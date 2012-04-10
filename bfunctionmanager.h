@@ -8,6 +8,7 @@
 #include <map>
 
 #include "functions/grayscale.h"
+#include "functions/edgedetect.h"
 
 class BFilterManager : public QObject
 {

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     bconvolution.cpp \
     bfunctionmanager.cpp \
     functions/grayscale.cpp \
-    functions/imagescale.cpp
+    functions/imagescale.cpp \
+    functions/edgedetect.cpp
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -47,7 +48,8 @@ HEADERS  += mainwindow.h \
     bfunctionmanager.h \
     functions/grayscale.h \
     functions/imagescale.h \
-    functions/bfilter.h
+    functions/bfilter.h \
+    functions/edgedetect.h
 
 FORMS    += mainwindow.ui
 

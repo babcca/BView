@@ -9,6 +9,7 @@ BRender::BRender()
 {
     filterManager.RegisterFilter(new GSAverage());
     filterManager.RegisterFilter(new GSAverageParallel());
+    filterManager.RegisterFilter(new EdgeDetect());
 }
 
 void BRender::SetScreenSize(int width, int height) {
@@ -24,12 +25,15 @@ void BRender::Render(Image *image) {
     float ratio = GetRatio(image);
     ImageScale scaler;
     std::shared_ptr<Image> renderImage = scaler.ScaleParallel(image, ratio);
+    Image * newImage = renderImage.get();
     for (auto filter = filterManager.begin(); filter != filterManager.end(); ++filter) {
         if ((*filter)->IsChecked()) {
-            (*filter)->Execute(renderImage.get());
+            Image * outImage = 0;
+            (*filter)->Execute(newImage, outImage);
+            newImage = outImage;
         }
     }
-    RenderImage(renderImage.get());
+    RenderImage(image);
 
 }
 

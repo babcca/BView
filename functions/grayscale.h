@@ -1,7 +1,6 @@
 #ifndef GRAYSCALE_H
 #define GRAYSCALE_H
 
-
 #include "bfilter.h"
 
 struct GrayScale {
@@ -21,11 +20,12 @@ public:
          SetMenuName(L"Grayscale");
          SetMenuItemName(L"Average");
     }
-    virtual void Execute(Image *image) {
+    virtual void Execute(Image *image, Image * out) {
         BImageProcess::ForEach(image, [](int index, RGBA & rgba) {
             char gray = (rgba.r + rgba.g + rgba.b) / 3;
             rgba = RGBA(gray, gray, gray);
         });
+        out = image;
     }
 };
 
@@ -35,11 +35,12 @@ public:
          SetMenuName(L"Grayscale Parallel");
          SetMenuItemName(L"Average");
     }
-    virtual void Execute(Image *image) {
+    virtual void Execute(Image *image, Image * out) {
         BImageProcess::ForEachParallel(image, [](int index, RGBA & rgba) {
             char gray = (rgba.r + rgba.g + rgba.b) / 3;
             rgba = RGBA(gray, gray, gray);
         });
+        out = image;
     }
 };
 

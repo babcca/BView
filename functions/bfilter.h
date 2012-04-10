@@ -13,7 +13,7 @@ public:
         SetMenuName(L"Other");
         SetMenuItemName(L"Unknown");
     }
-    virtual void Execute(Image * image) = 0;
+    virtual void Execute(Image * image, Image * out) = 0;
 
     std::wstring GetMenuName() const {
         return menuName;
