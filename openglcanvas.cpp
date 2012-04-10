@@ -6,6 +6,8 @@
 #include "bmpfileloader.h"
 
 
+
+
 OpenGlCanvas::OpenGlCanvas(QWidget *parent) :
     QGLWidget(parent),
     count(0)

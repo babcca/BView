@@ -21,7 +21,9 @@ public:
     typedef std::function<void (int, ImageRow &)> RowProcesor;
     typedef std::function<void (int, RGBA &)> ColProcesor;
     BImageProcess();
-    void ForEach(Image *source, Image * destiny, Procesor procesor);
+
+    static void ForEach(Image *source, Image * destiny, Procesor procesor);
+    static void ForEachParallel(Image *source, Image * destiny, Procesor procesor);
 
     static void ForEach(Image * source, EachProcesor eachProcesor);
 

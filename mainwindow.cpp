@@ -3,6 +3,8 @@
 #include "QKeyEvent"
 #include "QFileDialog"
 
+#include "functions/grayscale.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->connect(this, SIGNAL(LeftKey()), ui->OGLCanvas, SLOT(LeftKey()));
     this->connect(this, SIGNAL(SetDirectory(QString)), ui->OGLCanvas, SLOT(SetDirectory(QString)));
+    fm.RegisterToMenuBar(this->menuBar());
+
 }
 
 MainWindow::~MainWindow()

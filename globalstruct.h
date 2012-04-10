@@ -62,6 +62,10 @@ struct RGBA {
         return RGBA((char) r*value, (char) g*value, (char) b*value);
     }
 
+    RGBA operator*(const float value) {
+        return RGBA((char) r*value, (char) g*value, (char) b*value);
+    }
+
     RGBA operator+(const RGBA & rgba) {
         return RGBA(r+rgba.r,g+rgba.g,b+rgba.b);
     }

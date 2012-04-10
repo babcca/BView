@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     bimage.cpp \
     brender.cpp \
     bimageprocess.cpp \
-    bconvolution.cpp
+    bconvolution.cpp \
+    bfunctionmanager.cpp \
+    functions/grayscale.cpp \
+    functions/imagescale.cpp
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -40,7 +43,11 @@ HEADERS  += mainwindow.h \
     brender.h \
     bimageprocess.h \
     bconvolution.h \
-    bmatrix.h
+    bmatrix.h \
+    bfunctionmanager.h \
+    functions/grayscale.h \
+    functions/imagescale.h \
+    functions/bfilter.h
 
 FORMS    += mainwindow.ui
 

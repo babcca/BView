@@ -23,41 +23,14 @@ private:
 };
 
 
-#include "bimageprocess.h"
-struct GrayScale {
-    void Average(Image * src, Image * dest) {
-        BImageProcess procesor;
-        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
-            char gray = (rgba.r + rgba.g + rgba.b) / 3;
-            return RGBA(gray, gray, gray);
-        });
-    }
 
-    void Luminosity(Image * src, Image * dest) {
-        BImageProcess procesor;
-        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
-            char gray = (0.21 * rgba.r + 0.71 * rgba.g + 0.07 * rgba.b);
-            return RGBA(gray, gray, gray);
-        });
-    }
-    void Lightness(Image * src, Image * dest) {
-        BImageProcess procesor;
-        procesor.ForEach(src, dest, [](const RGBA & rgba) -> RGBA {
-            unsigned char max = std::max<unsigned char>(std::max<unsigned char>(rgba.r, rgba.g), rgba.b);
-            unsigned char min = std::min<unsigned char>(std::min<unsigned  char>(rgba.r, rgba.g), rgba.b);
-            unsigned char gray = (max + min) /2;
-            return RGBA(gray, gray, gray);
-        });
-    }
-
-};
 
 struct EdgeDetection {
     void Detect(Image * input, Image * output);
 };
-
+template<typename MatrixType>
 struct Convolution {
-    RGBA KernelsConvolute(Image * source, int row, int col, const std::vector<Matrix<int> >& kernels) {
+    RGBA KernelsConvolute(Image * source, int row, int col, const std::vector<Matrix<MatrixType> >& kernels) {
         std::shared_ptr<char> sourceData = source->ImageData.GetAllocatedMemory();
         RGBA * src = reinterpret_cast<RGBA *>(sourceData.get());
 
@@ -67,7 +40,7 @@ struct Convolution {
                 for (int j = 0; j < kernels[0].width; ++j) {
                     for (int k = 0; k < kernels.size(); ++k) {
                         int srcRow = (row + i) * (source->GetWidth());
-                        int kernelValue = kernels[k].Get(i,j);
+                        MatrixType kernelValue = kernels[k].Get(i,j);
                         value = value + (src[srcRow + col + j] * kernelValue);
                     }
                 }
@@ -76,7 +49,7 @@ struct Convolution {
         return value;
     }
 
-    void Convolute(Image * source, const std::vector<Matrix<int>  >& kernels, Image * output) {
+    void Convolute(Image * source, const std::vector<Matrix<MatrixType>  >& kernels, Image * output) {
         std::shared_ptr<char> destData = output->ImageData.GetAllocatedMemory();
         RGBA * dest = reinterpret_cast<RGBA *>(destData.get());
 
@@ -88,7 +61,8 @@ struct Convolution {
         }
     }
 
-    RGBA KernelConvolute(Image * source, int row, int col, const Matrix<int> & kernel) {
+
+    RGBA KernelConvolute(Image * source, int row, int col, const Matrix<MatrixType> & kernel) {
         std::shared_ptr<char> sourceData = source->ImageData.GetAllocatedMemory();
         RGBA * src = reinterpret_cast<RGBA *>(sourceData.get());
 

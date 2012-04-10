@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "bfunctionmanager.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +27,7 @@ protected:
     void keyPressEvent(QKeyEvent * keyEvent);
 private:
     Ui::MainWindow *ui;
+    BFilterManager fm;
 };
 
 #endif // MAINWINDOW_H

@@ -3,6 +3,8 @@
 #include <math.h>
 #include <assert.h>
 #include "bconvolution.h"
+#include "functions/grayscale.h"
+#include "functions/imagescale.h"
 BRender::BRender()
 {
 }
@@ -18,21 +20,64 @@ void BRender::Render(Image *image) {
     qDebug("%f", ratio);
     if (ratio < 1.0) {
         //Image * renderImage = AllocateRenderBuffer(image, ratio);
-        Scaler scaler;
-        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(image, ratio);
-        RenderImage(renderImage.get());
-        //delete renderImage;
-    } else {
-        RenderImage(image);
-        return;
+
+
+        // Gauss odstraneni sumu
+        float gauss[] = {1,2,1,2,4,2,1,2,1};
+        Matrix<float> gauss_matrix(3,3,gauss);
+        gauss_matrix *= (1/16.0);
+        std::vector<Matrix<float> > sum;
+        sum.push_back(gauss_matrix);
+        // laplace full
+        int e[] = {1,1,1,1,-8,1,1,1,1};
+        // laplace
+        int f[] = {0,1,0,1,-4,1,0,1,0};
+        std::vector<Matrix<int> > kernels;
+        Matrix<int> laplaceKernel(3,3,e);
+        kernels.push_back(laplaceKernel);
+        Convolution<int> convolution;
+        Convolution<float> convolution_f;
+
         Image * edge = new Image(0);
         edge->SetImageInfo(image->imageInfo);
         edge->AllocateMemmory();
+
+
+        Image * redukce_sum = new Image(0);
+        redukce_sum->SetImageInfo(image->imageInfo);
+        redukce_sum->AllocateMemmory();
+
+
+        Image * redukce_sum_out = new Image(0);
+        redukce_sum_out->SetImageInfo(image->imageInfo);
+        redukce_sum_out->AllocateMemmory();
+
+        GrayScale grayScale;
+
+        //grayScale.LuminosityParallel(image, edge);
+        //convolution_f.Convolute(image, sum, redukce_sum);
+        convolution.Convolute(image, kernels, redukce_sum);
+
+
+        ImageScale scaler;
+        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(redukce_sum, ratio);
+
+        RenderImage(renderImage.get());
+        delete edge;
+        delete redukce_sum;
+        delete redukce_sum_out;
+    } else {
+        Image * edge = new Image(0);
+        edge->SetImageInfo(image->imageInfo);
+        edge->AllocateMemmory();
+        // sobel
         int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
         int b[] = { 1,2,1, 0,0,0, -1,-2,-1};
         int c[] = { -2,-1,0, -1, 0, 1, 0,1,2 };
         int d[] = { 0,1,2,-1,0,1,-2,-1,0};
+        // laplace full
         int e[] = {1,1,1,1,-8,1,1,1,1};
+        // laplace
         int f[] = {0,1,0,1,-4,1,0,1,0};
         std::vector<Matrix<int> > kernels;
         Matrix<int> m(3,3,a);
@@ -46,8 +91,9 @@ void BRender::Render(Image *image) {
         //kernels.push_back(p);
         kernels.push_back(q);
         GrayScale g;
-        g.Luminosity(image, image);
-        Convolution convolution;
+        g.LuminosityParallel(image, image);
+        Convolution<int> convolution;
+
         convolution.Convolute(image, kernels, edge);
         RenderImage(edge);
         delete edge;
@@ -63,8 +109,6 @@ std::pair<float, float> BRender::GetCenterPosition(Image * image) {
 }
 
 void BRender::RenderImage(Image *image) {
-    GrayScale g;
-    g.Luminosity(image, image);
     int height = image->GetHeight();
     int width = image->GetWidth();
     int format = image->GetPixelFormat();
@@ -79,25 +123,4 @@ float BRender::GetRatio(Image *image) {
     int i_height = image->GetHeight();
     float ratio = std::min<float>((float) width / i_width, (float) height / i_height);
     return ratio;
-}
-
-
-/** @deprecated */
-Image * BRender::AllocateRenderBuffer(Image * image, float ratio) {
-    ImageInfo imageInfo = GetNewImageInfo(image, ratio);
-    Image * renderImage = new Image(0);
-    renderImage->SetImageInfo(imageInfo);
-    renderImage->AllocateMemmory();
-    return renderImage;
-}
-
-
-/** @deprecated */
-ImageInfo BRender::GetNewImageInfo(Image *image, float ratio) {
-    ImageInfo imageInfo = image->imageInfo;
-    // Bitmapa ma zarovnani radky na nasobky 4 (do 32 bit intu)
-    imageInfo.width = floor(imageInfo.width * ratio);
-    imageInfo.height = floor(imageInfo.height * ratio);
-    imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * 4;
-    return imageInfo;
 }

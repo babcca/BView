@@ -5,6 +5,8 @@
 #include "QLabel"
 #include "bimagemanager.h"
 #include "brender.h"
+
+
 class OpenGlCanvas : public QGLWidget
 {
     Q_OBJECT
@@ -33,6 +35,7 @@ private:
     int count;
     BImageManager imageManager;
     BRender render;
+
 };
 
 #endif // OPENGLCANVAS_H

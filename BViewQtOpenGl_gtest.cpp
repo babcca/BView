@@ -10,6 +10,8 @@
 #include "bimagemanager.h"
 #include "brender.h"
 #include "bconvolution.h"
+
+#include "functions/imagescale.h"
 class JPGFile : ImageFileLoader {
 public:
     static ImageFileLoader * CreateInstance() {
@@ -55,7 +57,7 @@ TEST(Convolution, Convolute) {
     ImageInfo imageInfo = imageManager.ActualImage->imageInfo;
     renderImage->SetImageInfo(imageInfo);
     renderImage->AllocateMemmory();
-    Convolution con;
+    Convolution<int> con;
     int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
     Matrix<int> m(3,3,a);
     std::vector<Matrix<int> > kernels;
@@ -74,7 +76,7 @@ TEST(Render, Scale) {
 
     tbb::tick_count start_serial = tbb::tick_count::now();
     for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
-        Scaler scaler;
+        ImageScale scaler;
         std::shared_ptr<Image> renderImage = scaler.ScaleSerial(&imageManager.ActualImage, ratio);
 
     }
@@ -82,7 +84,7 @@ TEST(Render, Scale) {
     std::cout << "Seril done, parallel start" << std::endl;
     tbb::tick_count start_parallel = tbb::tick_count::now();
     for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
-        Scaler scaler;
+        ImageScale scaler;
         std::shared_ptr<Image> renderImage = scaler.ScaleParallel(&imageManager.ActualImage, ratio);
 
     }
