@@ -3,10 +3,12 @@
 #include <math.h>
 #include <assert.h>
 #include "bconvolution.h"
-#include "functions/grayscale.h"
 #include "functions/imagescale.h"
+
 BRender::BRender()
 {
+    filterManager.RegisterFilter(new GSAverage());
+    filterManager.RegisterFilter(new GSAverageParallel());
 }
 
 void BRender::SetScreenSize(int width, int height) {
@@ -14,90 +16,21 @@ void BRender::SetScreenSize(int width, int height) {
     this->height = height;
 }
 
+void BRender::InitializeMenu(QMenuBar *menuBar) {
+    filterManager.RegisterToMenuBar(menuBar);
+}
+
 void BRender::Render(Image *image) {
-    float ratio =  GetRatio(image);
-    ratio = floor(ratio*100)/100;
-    qDebug("%f", ratio);
-    if (ratio < 1.0) {
-        //Image * renderImage = AllocateRenderBuffer(image, ratio);
-
-
-        // Gauss odstraneni sumu
-        float gauss[] = {1,2,1,2,4,2,1,2,1};
-        Matrix<float> gauss_matrix(3,3,gauss);
-        gauss_matrix *= (1/16.0);
-        std::vector<Matrix<float> > sum;
-        sum.push_back(gauss_matrix);
-        // laplace full
-        int e[] = {1,1,1,1,-8,1,1,1,1};
-        // laplace
-        int f[] = {0,1,0,1,-4,1,0,1,0};
-        std::vector<Matrix<int> > kernels;
-        Matrix<int> laplaceKernel(3,3,e);
-        kernels.push_back(laplaceKernel);
-        Convolution<int> convolution;
-        Convolution<float> convolution_f;
-
-        Image * edge = new Image(0);
-        edge->SetImageInfo(image->imageInfo);
-        edge->AllocateMemmory();
-
-
-        Image * redukce_sum = new Image(0);
-        redukce_sum->SetImageInfo(image->imageInfo);
-        redukce_sum->AllocateMemmory();
-
-
-        Image * redukce_sum_out = new Image(0);
-        redukce_sum_out->SetImageInfo(image->imageInfo);
-        redukce_sum_out->AllocateMemmory();
-
-        GrayScale grayScale;
-
-        //grayScale.LuminosityParallel(image, edge);
-        //convolution_f.Convolute(image, sum, redukce_sum);
-        convolution.Convolute(image, kernels, redukce_sum);
-
-
-        ImageScale scaler;
-        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(redukce_sum, ratio);
-
-        RenderImage(renderImage.get());
-        delete edge;
-        delete redukce_sum;
-        delete redukce_sum_out;
-    } else {
-        Image * edge = new Image(0);
-        edge->SetImageInfo(image->imageInfo);
-        edge->AllocateMemmory();
-        // sobel
-        int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
-        int b[] = { 1,2,1, 0,0,0, -1,-2,-1};
-        int c[] = { -2,-1,0, -1, 0, 1, 0,1,2 };
-        int d[] = { 0,1,2,-1,0,1,-2,-1,0};
-        // laplace full
-        int e[] = {1,1,1,1,-8,1,1,1,1};
-        // laplace
-        int f[] = {0,1,0,1,-4,1,0,1,0};
-        std::vector<Matrix<int> > kernels;
-        Matrix<int> m(3,3,a);
-        Matrix<int> n(3,3,b);
-        Matrix<int> o(3,3,c);
-        Matrix<int> p(3,3,d);
-        Matrix<int> q(3,3,f);
-        //kernels.push_back(m);
-        //kernels.push_back(n);
-        //kernels.push_back(o);
-        //kernels.push_back(p);
-        kernels.push_back(q);
-        GrayScale g;
-        g.LuminosityParallel(image, image);
-        Convolution<int> convolution;
-
-        convolution.Convolute(image, kernels, edge);
-        RenderImage(edge);
-        delete edge;
+    float ratio = GetRatio(image);
+    ImageScale scaler;
+    std::shared_ptr<Image> renderImage = scaler.ScaleParallel(image, ratio);
+    for (auto filter = filterManager.begin(); filter != filterManager.end(); ++filter) {
+        if ((*filter)->IsChecked()) {
+            (*filter)->Execute(renderImage.get());
+        }
     }
+    RenderImage(renderImage.get());
+
 }
 
 std::pair<float, float> BRender::GetCenterPosition(Image * image) {

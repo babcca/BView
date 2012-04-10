@@ -26,6 +26,7 @@ public:
     static void ForEachParallel(Image *source, Image * destiny, Procesor procesor);
 
     static void ForEach(Image * source, EachProcesor eachProcesor);
+    static void ForEachParallel(Image * source, EachProcesor eachProcesor);
 
     static void ForEachInRow(ImageRow & imageRow, ColProcesor colProcesor);
     static void ForEachRowSerial(Image * destiny, RowProcesor rowProcesor);

@@ -9,12 +9,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
     this->connect(this, SIGNAL(LeftKey()), ui->OGLCanvas, SLOT(LeftKey()));
+    this->connect(this, SIGNAL(RightKey()), ui->OGLCanvas, SLOT(RightKey()));
     this->connect(this, SIGNAL(SetDirectory(QString)), ui->OGLCanvas, SLOT(SetDirectory(QString)));
-    fm.RegisterToMenuBar(this->menuBar());
-
+    ui->OGLCanvas->InitializeMenu(ui->menuBar);
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +35,9 @@ void MainWindow::keyPressEvent(QKeyEvent *keyEvent) {
     switch (keyEvent->key()) {
         case Qt::Key_Left:
             emit LeftKey();
+            break;
+        case Qt::Key_Right:
+            emit RightKey();
             break;
         case Qt::Key_F11:
             // how to hide widgets?

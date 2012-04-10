@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "bfunctionmanager.h"
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +17,7 @@ public:
 
 signals:
     void LeftKey();
+    void RightKey();
     void SetDirectory(const QString & dirPath);
 
 private slots:
@@ -27,7 +27,6 @@ protected:
     void keyPressEvent(QKeyEvent * keyEvent);
 private:
     Ui::MainWindow *ui;
-    BFilterManager fm;
 };
 
 #endif // MAINWINDOW_H

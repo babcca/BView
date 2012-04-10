@@ -1,30 +1,35 @@
 #ifndef BRENDER_H
 #define BRENDER_H
 
-#include "bimage.h"
-#include "bmatrix.h"
+#include "bfunctionmanager.h"
 #include <vector>
 class BRender
 {
 public:
     BRender();
     void SetScreenSize(int width, int height);
-    void FitToScreen(bool fitToScreen);
+    /** @deprecated */
+    //void FitToScreen(bool fitToScreen);
+
     void Render(Image * image);
+    void InitializeMenu(QMenuBar * menuBar);
 private:
     float GetRatio(Image * image);
-    ImageInfo GetNewImageInfo(Image * image, float ratio);
     void RenderImage(Image * image);
     std::pair<float, float> GetCenterPosition(Image * image);
-    Image * AllocateRenderBuffer(Image *image, float ratio);
+    /** @deprecated */
+    //Image * AllocateRenderBuffer(Image *image, float ratio);
+    /** @deprecated */
+    //ImageInfo GetNewImageInfo(Image * image, float ratio);
 
     int width;
     int height;
+    BFilterManager filterManager;
 };
 
 
 
-
+#include "bmatrix.h"
 struct EdgeDetection {
     void Detect(Image * input, Image * output);
 };
@@ -38,7 +43,7 @@ struct Convolution {
 
             for (int i = 0; i < kernels[0].height; ++i) {
                 for (int j = 0; j < kernels[0].width; ++j) {
-                    for (int k = 0; k < kernels.size(); ++k) {
+                    for (unsigned int k = 0; k < kernels.size(); ++k) {
                         int srcRow = (row + i) * (source->GetWidth());
                         MatrixType kernelValue = kernels[k].Get(i,j);
                         value = value + (src[srcRow + col + j] * kernelValue);

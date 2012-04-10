@@ -3,7 +3,6 @@
 BFilterManager::BFilterManager(QObject *parent) :
     QObject(parent)
 {
-    filterMenu = new QMenu(tr("Filters"));
 }
 
 BFilterManager::~BFilterManager() {
@@ -13,18 +12,37 @@ BFilterManager::~BFilterManager() {
 }
 
 void BFilterManager::RegisterFilter(BFilter *filter) {
-    int filterId = filters.size();
+    QMenu * menu = GetMenu(filter->GetMenuName());
+    QString menuItemName = QString::fromStdWString(filter->GetItemMenuName());
+    QAction * menuItem = menu->addAction(menuItemName);
+    menuItem->setCheckable(true);
+    menuItem->setChecked(false);
+    connect(menuItem, SIGNAL(toggled(bool)), filter, SLOT(SetChecked(bool)));
     filters.push_back(filter);
-    filterMenu->addAction(QString::fromStdWString(filter->GetMenuName()), this, SLOT(CallFilter(filterId)));
-    //connect(filterMenu, SIGNAL(triggered(), this, SLOT(CallFilter(filterId))));
-
 }
 
 void BFilterManager::RegisterToMenuBar(QMenuBar *menuBar) {
-    menuBar->addMenu(filterMenu);
+    for (auto menu = filterMenu.begin(); menu != filterMenu.end(); ++menu) {
+        menuBar->addMenu(menu->second);
+    }
 }
 
-void BFilterManager::CallFilter(int filterId) {
-    BFilter * filter = filters[filterId];
-    qDebug("ahoj svete %d", filterId);
+std::vector<BFilter *>::iterator BFilterManager::begin() {
+    return filters.begin();
+}
+
+std::vector<BFilter *>::iterator BFilterManager::end() {
+    return filters.end();
+}
+
+QMenu * BFilterManager::GetMenu(std::wstring & menuName) {
+    auto menu = filterMenu.find(menuName);
+    if (menu == filterMenu.end()) {
+        QString menuNameQt = QString::fromStdWString(menuName);
+        QMenu * newMenu = new QMenu(menuNameQt);
+        filterMenu[menuName] = newMenu;
+        return newMenu;
+    } else {
+        return menu->second;
+    }
 }

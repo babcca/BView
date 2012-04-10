@@ -5,7 +5,9 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <vector>
-#include "functions/bfilter.h"
+#include <map>
+
+#include "functions/grayscale.h"
 
 class BFilterManager : public QObject
 {
@@ -15,13 +17,13 @@ public:
     ~BFilterManager();
     void RegisterFilter(BFilter *filter);
     void RegisterToMenuBar(QMenuBar * menuBar);
-signals:
+    QMenu * GetMenu(std::wstring &menuName);
+    std::vector<BFilter *>::iterator begin();
+    std::vector<BFilter *>::iterator end();
     
-public slots:
-    void CallFilter(int filterId);
 private:
     std::vector<BFilter *> filters;
-    QMenu * filterMenu;
+    std::map<std::wstring, QMenu *> filterMenu;
     
 };
 

@@ -42,9 +42,11 @@ std::shared_ptr<Image> ImageScale::ScaleSerial(Image * source, float ratio /* fi
 
 ImageInfo ImageScale::GetNewImageInfo(Image * source, float ratio) {
     ImageInfo imageInfo =  source->imageInfo;
-    imageInfo.width = floor(imageInfo.width * ratio);
-    imageInfo.height = floor(imageInfo.height * ratio);
-    imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * sizeof(RGBA);
+    if (ratio < 1.0) {
+        imageInfo.width = floor(imageInfo.width * ratio);
+        imageInfo.height = floor(imageInfo.height * ratio);
+        imageInfo.imageSize = (imageInfo.width) * (imageInfo.height ) * sizeof(RGBA);
+    }
     return imageInfo;
 }
 

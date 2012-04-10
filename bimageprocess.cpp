@@ -36,6 +36,32 @@ void BImageProcess::ForEachParallel(Image *source, Image * destiny, Procesor pro
     });
 }
 
+void BImageProcess::ForEach(Image *source, EachProcesor eachProcesor) {
+    int pixels = source->ImageData.GetAllocatedDataSize() / sizeof(RGBA);
+    std::shared_ptr<char> imageData = source->ImageData.GetAllocatedMemory();
+    RGBA * rgbaData = reinterpret_cast<RGBA *>(imageData.get());
+
+    for (int position = 0; position < pixels; ++position) {
+        eachProcesor(position, rgbaData[position]);
+
+    }
+}
+
+void BImageProcess::ForEachParallel(Image * source, EachProcesor eachProcesor) {
+    int pixels = source->ImageData.GetAllocatedDataSize() / sizeof(RGBA);
+    std::shared_ptr<char> imageData = source->ImageData.GetAllocatedMemory();
+    RGBA * rgbaData = reinterpret_cast<RGBA *>(imageData.get());
+
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, pixels), [=](tbb::blocked_range<size_t> & range) {
+        for (size_t row = range.begin(); row != range.end(); ++row) {
+            eachProcesor(row, rgbaData[row]);
+        }
+
+    });
+
+
+}
+
 
 
 void BImageProcess::ForEachInRow(ImageRow & imageRow, ColProcesor colProcesor) {

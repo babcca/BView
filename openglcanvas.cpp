@@ -5,12 +5,8 @@
 #include "fileloaderfactory.h"
 #include "bmpfileloader.h"
 
-
-
-
 OpenGlCanvas::OpenGlCanvas(QWidget *parent) :
-    QGLWidget(parent),
-    count(0)
+    QGLWidget(parent)
 {
     FileFactory<ImageFileLoader *> fileFactory;
     fileFactory.AddFactory("bmp", [](){ return BMPFileLoader::CreateInstance(); });
@@ -19,6 +15,11 @@ OpenGlCanvas::OpenGlCanvas(QWidget *parent) :
 
 OpenGlCanvas::~OpenGlCanvas() {
     //delete timer;
+}
+
+void OpenGlCanvas::InitializeMenu(QMenuBar *menuBar) {
+    //connect(menuBar, SIGNAL(triggered(QAction*)), this, SLOT(RedrawCanvas()));
+    render.InitializeMenu(menuBar);
 }
 
 void OpenGlCanvas::SetDirectory(const QString & dirPath) {
@@ -59,6 +60,13 @@ void OpenGlCanvas::LeftKey() {
     updateGL();
 }
 
+
+void OpenGlCanvas::RightKey() {
+    qDebug("Right Key");
+    --imageManager.ActualImage;
+    updateGL();
+}
+
 void OpenGlCanvas::RedrawCanvas() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -70,12 +78,4 @@ void OpenGlCanvas::RedrawCanvas() {
         render.Render(&imageManager.ActualImage);
         //imageManager.ActualImage->DeleteFromCache();
     }
-    count++;
-}
-
-void OpenGlCanvas::ShowFps() {
-}
-
-void OpenGlCanvas::SetDebugger(QLabel * debugger) {
-    this->debugger = debugger;
 }

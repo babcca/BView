@@ -27,7 +27,14 @@ public:
                 item = imageManager.imagesId.begin();
             }
         }
-        /** -- */
+
+        void operator-- () {
+            if (item == imageManager.imagesId.begin()) {
+                item = imageManager.imagesId.end();
+            }
+            --item;
+        }
+
         /** @deprecated */
         bool operator== (const BImageManagerIterator & it) const {
             return item == it.item;
