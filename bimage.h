@@ -20,7 +20,7 @@ public:
     const int GetPixelSize() const;
     const int GetPixelFormat() const;
     const RGBA GetPixel(int row, int col);
-
+    Image * Clone();
     DataAllocator ImageData;
     ImageInfo imageInfo;
 private:

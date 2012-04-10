@@ -31,6 +31,7 @@ private:
     static const int ONE_SECOND = 1000;
     static const int FPS_COUNT = 60;
     BImageManager imageManager;
+
     BRender render;
 
 };

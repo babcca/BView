@@ -2,18 +2,20 @@
 #define BFILTER_H
 #include <QObject>
 #include "bimageprocess.h"
+#include "bimagemanager.h"
 
 class BFilter : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit BFilter(QObject *parent = 0) : QObject(parent) {
+    explicit BFilter(QObject *parent = 0)
+        : QObject(parent) {
         SetChecked(false);
         SetMenuName(L"Other");
         SetMenuItemName(L"Unknown");
     }
-    virtual void Execute(Image * image, Image * out) = 0;
+    virtual void Execute(std::shared_ptr<Image> image) = 0;
 
     std::wstring GetMenuName() const {
         return menuName;
@@ -39,7 +41,7 @@ protected:
         this->menuName = menuName;
     }
     void SetMenuItemName(const std::wstring & menuItemName) {
-        this->menuItemName = menuName;
+        this->menuItemName = menuItemName;
     }
 
 private:

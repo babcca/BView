@@ -12,12 +12,14 @@
 #include "bconvolution.h"
 
 #include "functions/imagescale.h"
+#include "bfunctionmanager.h"
+
 class JPGFile : ImageFileLoader {
 public:
     static ImageFileLoader * CreateInstance() {
         return new JPGFile();
     }
-    virtual void Decode(Image *destImage) {
+    virtual void Decode(Image *) {
     }
 };
 
@@ -52,18 +54,10 @@ TEST(Convolution, Convolute) {
     imageManager.SetFileFactory(fileFactory);
     imageManager.LoadDirectory(L".");
 
-
-    Image * renderImage = new Image(0);
-    ImageInfo imageInfo = imageManager.ActualImage->imageInfo;
-    renderImage->SetImageInfo(imageInfo);
-    renderImage->AllocateMemmory();
-    //Convolution<int> con;
-    //int a[] = { -1,0,1, -2, 0, 2, -1,0,1};
-    //Matrix<int> m(3,3,a);
-    //std::vector<Matrix<int> > kernels;
-    //kernels.push_back(m);
-    //con.Convolute(&imageManager.ActualImage, kernels, renderImage);
-    delete renderImage;
+    //EdgeDetectLaplace5x5 * laplace = new EdgeDetectLaplace5x5();
+    //std::shared_ptr<Image> image(&imageManager.ActualImage);
+    //laplace->Execute(image);
+    //delete laplace;
 }
 
 TEST(Render, Scale) {
@@ -75,7 +69,7 @@ TEST(Render, Scale) {
     imageManager.LoadDirectory(L".");
 
     tbb::tick_count start_serial = tbb::tick_count::now();
-    for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
+    for (float ratio = 0.2f; ratio < 1.0f; ratio = ratio + 0.02f) {
         ImageScale scaler;
         std::shared_ptr<Image> renderImage = scaler.ScaleSerial(&imageManager.ActualImage, ratio);
 
@@ -83,9 +77,9 @@ TEST(Render, Scale) {
     tbb::tick_count stop_serial = tbb::tick_count::now();
     std::cout << "Seril done, parallel start" << std::endl;
     tbb::tick_count start_parallel = tbb::tick_count::now();
-    for (float ratio = 0.2; ratio < 1.0; ratio = ratio + 0.02) {
+    for (float ratio = 0.2f; ratio < 1.0f; ratio = ratio + 0.02f) {
         ImageScale scaler;
-        std::shared_ptr<Image> renderImage = scaler.ScaleParallel(&imageManager.ActualImage, ratio);
+        scaler.ScaleParallel(&imageManager.ActualImage, ratio);
 
     }
     tbb::tick_count stop_parallel = tbb::tick_count::now();

@@ -26,7 +26,7 @@ void BImageManager::LoadDirectory(const std::wstring & dirName) {
         bool fileLoaderExists = fileFactory.IsRegistred(suffix);
         if (fileLoaderExists) {
             QFileInfo fileInfo = *i;
-            IMAGE_ID image_id = LoadImage(fileInfo);
+            LoadImage(fileInfo);
         }
     }
     auto foundItem = std::find(imagesId.begin(), imagesId.end(), oldImageId);

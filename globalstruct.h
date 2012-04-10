@@ -51,6 +51,14 @@ struct RGBA {
         this->a = a;
     }
 
+    template<typename Type>
+    RGBA(Type r, Type g, Type b, Type a = 255) {
+        this->r = (unsigned char) (std::max<Type>(0, std::min<Type>(r, 255)));
+        this->g = (unsigned char) (std::max<Type>(0, std::min<Type>(g, 255)));
+        this->b = (unsigned char) (std::max<Type>(0, std::min<Type>(b, 255)));
+        this->a = (unsigned char) (std::max<Type>(0, std::min<Type>(a, 255)));
+    }
+
     RGBA(const BGR & bgr) {
         this->r = bgr.r;
         this->g = bgr.g;
@@ -59,11 +67,11 @@ struct RGBA {
     }
 
     RGBA operator*(const int value) {
-        return RGBA((char) r*value, (char) g*value, (char) b*value);
+        return RGBA(r*value, g*value, b*value);
     }
 
     RGBA operator*(const float value) {
-        return RGBA((char) r*value, (char) g*value, (char) b*value);
+        return RGBA(r*value, g*value, b*value);
     }
 
     RGBA operator+(const RGBA & rgba) {

@@ -4,13 +4,24 @@
 #include "bfilter.h"
 #include "bmatrix.h"
 
-class EdgeDetect : public BFilter
+class EdgeDetectLaplace5x5 : public BFilter
 {
 public:
-    EdgeDetect();
+    EdgeDetectLaplace5x5();
     std::vector<Matrix<int> > GetLaplace();
-    virtual void Execute(Image *image, Image *out);
+    virtual void Execute(std::shared_ptr<Image> image);
 };
+
+class EdgeDetectLaplace3x3 : public BFilter
+{
+public:
+    EdgeDetectLaplace3x3();
+    std::vector<Matrix<int> > GetLaplace();
+    virtual void Execute(std::shared_ptr<Image> image);
+};
+
+
+
 
 template<typename MatrixType>
 struct Convolution {
@@ -18,19 +29,22 @@ struct Convolution {
         std::shared_ptr<char> sourceData = source->ImageData.GetAllocatedMemory();
         RGBA * src = reinterpret_cast<RGBA *>(sourceData.get());
 
-        RGBA value(0,0,0);
-
-            for (int i = 0; i < kernels[0].height; ++i) {
-                for (int j = 0; j < kernels[0].width; ++j) {
-                    for (unsigned int k = 0; k < kernels.size(); ++k) {
-                        int srcRow = (row + i) * (source->GetWidth());
-                        MatrixType kernelValue = kernels[k].Get(i,j);
-                        value = value + (src[srcRow + col + j] * kernelValue);
-                    }
+        MatrixType value_r = 0;
+        MatrixType value_g = 0;
+        MatrixType value_b = 0;
+        for (int i = 0; i < kernels[0].height; ++i) {
+            for (int j = 0; j < kernels[0].width; ++j) {
+                for (unsigned int k = 0; k < kernels.size(); ++k) {
+                    int srcRow = (row + i) * (source->GetWidth());
+                    MatrixType kernelValue = kernels[k].Get(i,j);
+                    value_r += (src[srcRow + col + j].r * kernelValue);
+                    value_g += (src[srcRow + col + j].g * kernelValue);
+                    value_b += (src[srcRow + col + j].b * kernelValue);
                 }
             }
+        }
 
-        return value;
+        return RGBA(value_r, value_g, value_b);
     }
 
     void Convolute(Image * source, const std::vector<Matrix<MatrixType>  >& kernels, Image * output) {

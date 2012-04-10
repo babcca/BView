@@ -8,17 +8,19 @@
 OpenGlCanvas::OpenGlCanvas(QWidget *parent) :
     QGLWidget(parent)
 {
+
     FileFactory<ImageFileLoader *> fileFactory;
     fileFactory.AddFactory("bmp", [](){ return BMPFileLoader::CreateInstance(); });
     imageManager.SetFileFactory(fileFactory);
 }
 
 OpenGlCanvas::~OpenGlCanvas() {
-    //delete timer;
+
 }
 
 void OpenGlCanvas::InitializeMenu(QMenuBar *menuBar) {
-    render.InitializeMenu(menuBar);
+   connect(menuBar, SIGNAL(triggered(QAction*)), this, SLOT(updateGL()));
+   render.InitializeMenu(menuBar);
 }
 
 void OpenGlCanvas::SetDirectory(const QString & dirPath) {
@@ -42,12 +44,9 @@ void OpenGlCanvas::resizeGL(int width, int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, width, height, 0, 0, 1);
-    render.SetScreenSize(width, height);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
 }
-
 
 void OpenGlCanvas::paintGL() {
     RedrawCanvas();
@@ -70,11 +69,17 @@ void OpenGlCanvas::RedrawCanvas() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    //glRasterPos2i(500, 500);
-
     if (imageManager.ActualImage.initialized) {
         qDebug("Redraw");
-        render.Render(&imageManager.ActualImage);
+        std::shared_ptr<Image> image = render.Render(&imageManager.ActualImage, this->width(), this->height());
+        std::pair<float, float> centerPosition = render.GetCenterPosition(image.get(), this->width(), this->height());
+        glRasterPos2i(centerPosition.first, centerPosition.second);
+
+        int height = image->GetHeight();
+        int width = image->GetWidth();
+        int format = image->GetPixelFormat();
+        std::shared_ptr<char> raw = image->ImageData.GetAllocatedMemory();
+        glDrawPixels(width, height, format, GL_UNSIGNED_BYTE, raw.get());
         //imageManager.ActualImage->DeleteFromCache();
     }
 }

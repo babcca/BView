@@ -52,3 +52,11 @@ const int Image::GetPixelFormat() const {
 void Image::AllocateMemmory() {
     ImageData.AllocateDataMemory(imageInfo.imageSize);
 }
+
+Image * Image::Clone() {
+    Image * image = new Image(0);
+    image->SetImageInfo(imageInfo);
+    image->AllocateMemmory();
+    std::memcpy(image->ImageData.GetAllocatedMemory().get(), ImageData.GetAllocatedMemory().get(), ImageData.GetAllocatedDataSize());
+    return image;
+}

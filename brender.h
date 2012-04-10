@@ -1,38 +1,23 @@
 #ifndef BRENDER_H
 #define BRENDER_H
 
-#include "bfunctionmanager.h"
 #include <vector>
+#include "bimage.h"
+#include "bfunctionmanager.h"
 class BRender
 {
 public:
     BRender();
     void SetScreenSize(int width, int height);
-    /** @deprecated */
-    //void FitToScreen(bool fitToScreen);
-
-    void Render(Image * image);
+    std::shared_ptr<Image> Render(Image * image, int width, int height);
+    std::pair<float, float> GetCenterPosition(Image * image, int screen_width, int screen_height);
     void InitializeMenu(QMenuBar * menuBar);
 private:
-    float GetRatio(Image * image);
+    float GetRatio(Image * image, int width, int height);
     void RenderImage(Image * image);
-    std::pair<float, float> GetCenterPosition(Image * image);
-    /** @deprecated */
-    //Image * AllocateRenderBuffer(Image *image, float ratio);
-    /** @deprecated */
-    //ImageInfo GetNewImageInfo(Image * image, float ratio);
-
+    BFilterManager filterManager;
     int width;
     int height;
-    BFilterManager filterManager;
 };
-
-
-
-#include "bmatrix.h"
-struct EdgeDetection {
-    void Detect(Image * input, Image * output);
-};
-
 
 #endif // BRENDER_H

@@ -23,12 +23,14 @@ public:
             item = it.item;
         }
         void operator++ () {
+            if (!initialized) return;
             if (++item == imageManager.imagesId.end()) {
                 item = imageManager.imagesId.begin();
             }
         }
 
         void operator-- () {
+            if (!initialized) return;
             if (item == imageManager.imagesId.begin()) {
                 item = imageManager.imagesId.end();
             }

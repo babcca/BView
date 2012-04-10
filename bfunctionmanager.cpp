@@ -17,7 +17,7 @@ void BFilterManager::RegisterFilter(BFilter *filter) {
     QAction * menuItem = menu->addAction(menuItemName);
     menuItem->setCheckable(true);
     menuItem->setChecked(false);
-    connect(menuItem, SIGNAL(toggled(bool)), filter, SLOT(SetChecked(bool)));
+    connect(menuItem, SIGNAL(triggered(bool)), filter, SLOT(SetChecked(bool)));
     filters.push_back(filter);
 }
 
