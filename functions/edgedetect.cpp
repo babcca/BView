@@ -6,7 +6,7 @@ EdgeDetectLaplace5x5::EdgeDetectLaplace5x5() : BFilter()
     SetMenuItemName(L"Laplace 5x5");
 }
 
-void EdgeDetectLaplace5x5::Execute(std::shared_ptr<Image> image) {
+void EdgeDetectLaplace5x5::Execute(std::shared_ptr<Image> image, QObject *) {
     std::shared_ptr<Image> out(image->Clone());
 
     Convolution<int> con;
@@ -27,7 +27,7 @@ EdgeDetectLaplace3x3::EdgeDetectLaplace3x3() : BFilter()
     SetMenuItemName(L"Laplace 3x3");
 }
 
-void EdgeDetectLaplace3x3::Execute(std::shared_ptr<Image> image) {
+void EdgeDetectLaplace3x3::Execute(std::shared_ptr<Image> image, QObject *) {
     std::shared_ptr<Image> out(image->Clone());
     Convolution<int> con;
     con.Convolute(out.get(), GetLaplace(), image.get());

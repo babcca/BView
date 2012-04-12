@@ -9,7 +9,7 @@ class EdgeDetectLaplace5x5 : public BFilter
 public:
     EdgeDetectLaplace5x5();
     std::vector<Matrix<int> > GetLaplace();
-    virtual void Execute(std::shared_ptr<Image> image);
+    virtual void Execute(std::shared_ptr<Image> image, QObject * parent = 0);
 };
 
 class EdgeDetectLaplace3x3 : public BFilter
@@ -17,7 +17,7 @@ class EdgeDetectLaplace3x3 : public BFilter
 public:
     EdgeDetectLaplace3x3();
     std::vector<Matrix<int> > GetLaplace();
-    virtual void Execute(std::shared_ptr<Image> image);
+    virtual void Execute(std::shared_ptr<Image> image, QObject * parent = 0);
 };
 
 

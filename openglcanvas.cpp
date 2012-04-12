@@ -64,15 +64,15 @@ void OpenGlCanvas::RightKey() {
     --imageManager.ActualImage;
     updateGL();
 }
-
 void OpenGlCanvas::RedrawCanvas() {
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
     if (imageManager.ActualImage.initialized) {
         qDebug("Redraw");
-        std::shared_ptr<Image> image = render.Render(&imageManager.ActualImage, this->width(), this->height());
+        std::shared_ptr<Image> image = render.Render(&imageManager.ActualImage, this->width(), this->height(), this);
         std::pair<float, float> centerPosition = render.GetCenterPosition(image.get(), this->width(), this->height());
+        //?
         glRasterPos2i(centerPosition.first, centerPosition.second);
 
         int height = image->GetHeight();
@@ -80,6 +80,5 @@ void OpenGlCanvas::RedrawCanvas() {
         int format = image->GetPixelFormat();
         std::shared_ptr<char> raw = image->ImageData.GetAllocatedMemory();
         glDrawPixels(width, height, format, GL_UNSIGNED_BYTE, raw.get());
-        //imageManager.ActualImage->DeleteFromCache();
     }
 }

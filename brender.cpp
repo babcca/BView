@@ -14,6 +14,8 @@ BRender::BRender() {
     filterManager.RegisterFilter(new GSLuminosityParallel());
     filterManager.RegisterFilter(new GSLightnessParallel());
 
+    filterManager.RegisterFilter(new GSLightnessGPU());
+
     filterManager.RegisterFilter(new EdgeDetectLaplace5x5());
     filterManager.RegisterFilter(new EdgeDetectLaplace3x3());
 }
@@ -22,13 +24,13 @@ void BRender::InitializeMenu(QMenuBar *menuBar) {
      filterManager.RegisterToMenuBar(menuBar);
 }
 
-std::shared_ptr<Image> BRender::Render(Image *image, int width, int height) {
+std::shared_ptr<Image> BRender::Render(Image *image, int width, int height, QObject * parent) {
     float ratio = GetRatio(image, width, height);
     ImageScale scaler;
     std::shared_ptr<Image> renderImage = scaler.ScaleParallel(image, ratio);
     for (auto filter = filterManager.begin(); filter != filterManager.end(); ++filter) {
         if ((*filter)->IsChecked()) {
-            (*filter)->Execute(renderImage);
+            (*filter)->Execute(renderImage, parent);
         }
     }
     return renderImage;

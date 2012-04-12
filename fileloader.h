@@ -20,7 +20,7 @@ public:
         return fileInfo.absoluteFilePath().toStdWString();
     }
 
-protected:
+//protected:
     void LoadIntoMemory() {
         std::ifstream file(GetFullPath(), std::ios::in | std::ios::binary);
         if (!file.is_open()) {

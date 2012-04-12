@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     bfunctionmanager.cpp \
     functions/grayscale.cpp \
     functions/imagescale.cpp \
-    functions/edgedetect.cpp
+    functions/edgedetect.cpp \
+
 
 HEADERS  += mainwindow.h \
     openglcanvas.h \
@@ -49,10 +50,14 @@ HEADERS  += mainwindow.h \
     functions/grayscale.h \
     functions/imagescale.h \
     functions/bfilter.h \
-    functions/edgedetect.h
+    functions/edgedetect.h \
+
 
 FORMS    += mainwindow.ui
 
 INCLUDEPATH += "gtest/include" "tbb/include"
 LIBS += -Llibs -lgtestd -lbmplib
 CONFIG += console
+
+OTHER_FILES += \
+    shaders/grayscale.frag

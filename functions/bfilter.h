@@ -15,8 +15,7 @@ public:
         SetMenuName(L"Other");
         SetMenuItemName(L"Unknown");
     }
-    virtual void Execute(std::shared_ptr<Image> image) = 0;
-
+    virtual void Execute(std::shared_ptr<Image> image, QObject * parent = 0) = 0;
     std::wstring GetMenuName() const {
         return menuName;
     }
@@ -33,7 +32,11 @@ signals:
 public slots:
     void SetChecked(bool state) {
         this->state = state;
-        qDebug("ahoj %d", state);
+        if (!IsChecked()) {
+            Release();
+        } else {
+            Initialize();
+        }
     }
 
 protected:
@@ -43,6 +46,8 @@ protected:
     void SetMenuItemName(const std::wstring & menuItemName) {
         this->menuItemName = menuItemName;
     }
+    virtual void Release() {}
+    virtual void Initialize() {}
 
 private:
     std::wstring menuName;
